@@ -33,16 +33,23 @@ for filename in os.listdir(directory):
 # Convert the dictionary to a DataFrame
 df = pd.DataFrame(runtimes)
 
-# Plot the data
-plt.figure(figsize=(10, 6))
+# Check the unique models in the DataFrame
+print("Unique models in the DataFrame:", df['Model'].unique())
+
+# Plot and save data for each model separately
 for model in df['Model'].unique():
     subset = df[df['Model'] == model]
-    plt.bar(subset['Platform'], subset['Runtime (seconds)'], label=model)
-
-plt.title('Model Runtime Comparison Across Platforms')
-plt.xlabel('Platform')
-plt.ylabel('Runtime (seconds)')
-plt.legend(title='Model')
-plt.xticks(rotation=45)
-plt.tight_layout()
-plt.show()
+    if not subset.empty:
+        plt.figure(figsize=(10, 6))
+        plt.bar(subset['Platform'], subset['Runtime (seconds)'], label=model)
+        
+        plt.title(f'{model} Runtime Comparison Across Platforms')
+        plt.xlabel('Platform')
+        plt.ylabel('Runtime (seconds)')
+        plt.legend(title='Model')
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        
+        # Save the plot as a PNG file
+        plt.savefig(f'{model}_runtime_comparison.png')
+        plt.show()

@@ -1,0 +1,1 @@
+Runtime for resnet18 on cuda: 7.47 seconds

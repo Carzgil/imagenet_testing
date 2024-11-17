@@ -8,10 +8,8 @@ The complexity of each model is estimated based on the number of layers and oper
 
 ### Mathematical Estimation
 - **VGG11**: The complexity is primarily determined by the number of convolutional layers and the size of the filters. The computational complexity for a single convolutional layer can be estimated as:
-  $
-  \text{Complexity} = O(N \times M \times K^2 \times C)
-  $
-  where $(N)$ is the number of output feature maps, \(M\) is the number of input feature maps, $(K)$ is the kernel size, and $(C)$ is the spatial size of the input feature map.
+  $\text{Complexity} = O(N \times M \times K^2 \times C)$
+  where $(N)$ is the number of output feature maps, $(M)$ is the number of input feature maps, $(K)$ is the kernel size, and $(C)$ is the spatial size of the input feature map.
 
 - **ResNet**: ResNet's complexity is higher due to its deeper architecture and the presence of residual connections. The complexity for a ResNet block can be similarly estimated, but with additional operations for the skip connections.
 

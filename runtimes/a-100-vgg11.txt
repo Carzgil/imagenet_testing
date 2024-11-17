@@ -1,2 +1,0 @@
-Runtime for vgg11 on cuda: 19.36 seconds
-Runtime for resnet18 on cuda: 6.91 seconds

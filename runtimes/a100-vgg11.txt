@@ -1,0 +1,1 @@
+Runtime for vgg11 on cuda: 19.36 seconds

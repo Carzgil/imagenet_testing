@@ -1,0 +1,1 @@
+Runtime for vgg11 on mps: 59.93 seconds

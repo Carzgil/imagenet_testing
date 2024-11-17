@@ -1,0 +1,74 @@
+diff --git a/imagenet/main.py b/imagenet/main.py
+index e828ea0..2209adc 100644
+--- a/imagenet/main.py
++++ b/imagenet/main.py
+@@ -20,6 +20,7 @@ import torchvision.models as models
+ import torchvision.transforms as transforms
+ from torch.optim.lr_scheduler import StepLR
+ from torch.utils.data import Subset
++import torch.cuda.profiler as ncu
+ 
+ model_names = sorted(name for name in models.__dict__
+     if name.islower() and not name.startswith("__")
+@@ -120,6 +121,23 @@ def main():
+         main_worker(args.gpu, ngpus_per_node, args)
+ 
+ 
++class VerboseExecution(nn.Module):
++    def __init__(self, model: nn.Module):
++        super().__init__()
++        self.model = model
++
++        print(f"VE: model {model}")
++
++        # Register a hook for each layer
++        for name, layer in self.model.named_modules():
++            layer.__name__ = name
++            layer.register_forward_hook(
++                    lambda layer, args, output: print(f"{layer.__name__}: {type(layer)} : {args[0].shape} : {output.shape}")
++            )
++
++    def forward(self, x):
++        return self.model(x)
++
+ def main_worker(gpu, ngpus_per_node, args):
+     global best_acc1
+     args.gpu = gpu
+@@ -266,6 +284,10 @@ def main_worker(gpu, ngpus_per_node, args):
+         val_dataset, batch_size=args.batch_size, shuffle=False,
+         num_workers=args.workers, pin_memory=True, sampler=val_sampler)
+ 
++    for name, param in model.named_parameters():
++        print(name, param.size())
++    model = VerboseExecution(model)
++
+     if args.evaluate:
+         validate(val_loader, model, criterion, args)
+         return
+@@ -275,7 +297,9 @@ def main_worker(gpu, ngpus_per_node, args):
+             train_sampler.set_epoch(epoch)
+ 
+         # train for one epoch
++        ncu.start()
+         train(train_loader, model, criterion, optimizer, epoch, device, args)
++        ncu.stop()
+ 
+         # evaluate on validation set
+         acc1 = validate(val_loader, model, criterion, args)
+@@ -343,6 +367,8 @@ def train(train_loader, model, criterion, optimizer, epoch, device, args):
+         if i % args.print_freq == 0:
+             progress.display(i + 1)
+ 
++        break
++
+ 
+ def validate(val_loader, model, criterion, args):
+ 
+@@ -375,6 +401,7 @@ def validate(val_loader, model, criterion, args):
+ 
+                 if i % args.print_freq == 0:
+                     progress.display(i + 1)
++                break
+ 
+     batch_time = AverageMeter('Time', ':6.3f', Summary.NONE)
+     losses = AverageMeter('Loss', ':.4e', Summary.NONE)

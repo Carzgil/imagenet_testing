@@ -1,0 +1,34 @@
+main.py
+	2 changes from pytorch-example repo: 
+	1. added ncu.start/stop
+	2. added VerboseExecut* for better model layer analysis.
+
+git-diff-main.py.log
+	Use the diff-log to see what I have changed. The NCU is just 3 lines. Some changes to shorten the runs. A forward hook to print input data to each layers. 
+
+run.sh
+	Simple way to run main.py to collect input, data sizes for layers. Useful for complexity estimation
+	NO need to get image files. 
+
+vgg11.w.out.log
+	corresponding output. Find lecture note materials to finish your complexity computation
+
+
+hm2_perf_est_measure_ncu_homework_3_help.pdf
+hm2_perf_est_measure.pdf
+	Above 2 files should be useful to remind you the basics.
+
+
+
+NOTES on NCU usage to collect necessary info for roofline , Please check each command line options. 
+
+
+/share/apps/cuda/11.1.74/bin/ncu --profile-from-start off --metrics gpu__time_duration.sum,dram__bytes_read.sum,dram__bytes_write.sum,smsp__sass_thread_inst_executed_op_fadd_pred_on.sum,smsp__sass_thread_inst_executed_op_fmul_pred_on.sum,smsp__sass_thread_inst_executed_op_ffma_pred_on.sum --csv --page raw --log-file resnet18-v100.csv --target-processes all python main.py /home/sxp8182/imagenet/ -a vgg11 --epochs 1 -b 1 --gpu 0
+
+
+Explanation: 
+	gpu_time_duration.sum	kernel execution time on GPU
+	dram_bytes_read		memory traffic
+	OTHERS			computations
+
+	This way you have COMPUTE-rate / Mem-traffic-rate
